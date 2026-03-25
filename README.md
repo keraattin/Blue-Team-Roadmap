@@ -1398,6 +1398,7 @@ Stay ahead by understanding where the industry is heading:
 ## 📚 Free Resources Directory
 
 ### YouTube Channels
+
 | Channel | Focus | Link |
 |---------|-------|------|
 | Professor Messer | Security+ & Network+ full courses | [YouTube](https://www.youtube.com/@professormesser) |
@@ -1408,6 +1409,18 @@ Stay ahead by understanding where the industry is heading:
 | NetworkChuck | Fun networking fundamentals | [YouTube](https://www.youtube.com/@NetworkChuck) |
 | The Cyber Mentor | Ethical hacking and security career | [YouTube](https://www.youtube.com/@TCMSecurityAcademy) |
 | SANS Institute | Conference talks and training previews | [YouTube](https://www.youtube.com/@SANSInstitute) |
+| David Bombal | Networking, Python, expert interviews | [YouTube](https://www.youtube.com/@davidbombal) |
+| LiveOverflow | Binary exploitation, CTF deep dives | [YouTube](https://www.youtube.com/@LiveOverflow) |
+| IppSec | Hack The Box walkthroughs, methodology | [YouTube](https://www.youtube.com/@ippsec) |
+| Hak5 | Security tools, hardware hacking | [YouTube](https://www.youtube.com/@haboratory) |
+| Black Hills InfoSec | Threat hunting, SOC webcasts, free training | [YouTube](https://www.youtube.com/@BlackHillsInformationSecurity) |
+| Active Countermeasures | Threat hunting techniques and tools | [YouTube](https://www.youtube.com/@ActiveCountermeasures) |
+| Malware Analysis for Hedgehogs | Reverse engineering, malware deep dives | [YouTube](https://www.youtube.com/@MalwareAnalysisForHedgehogs) |
+| PC Security Channel | Malware testing, antivirus comparisons | [YouTube](https://www.youtube.com/@pcsecuritychannel) |
+| Cyberspatial | Certification study guides (CySA+, CASP+) | [YouTube](https://www.youtube.com/@Cyberspatial) |
+| Infosec Institute | Enterprise security, GRC, awareness training | [YouTube](https://www.youtube.com/@InfosecEdu) |
+| Security Onion | Network security monitoring tutorials | [YouTube](https://www.youtube.com/@SecurityOnion) |
+| Gerald Auger | SOC career strategy, resume reviews | [YouTube](https://www.youtube.com/@yourinfoseccareercoach) |
 
 ### Blogs
 | Blog | Focus | Link |
