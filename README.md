@@ -1114,32 +1114,222 @@ Education
 
 ### 10.4 Interview Preparation
 
-**Common Technical Questions:**
-
+SOC analyst interviews typically have three parts: behavioral/cultural fit, foundational concepts, and scenario-based investigations. Scenario questions carry the most weight because they reveal how you actually think and work under pressure. Lab and CTF experiences absolutely count as real experience.
+ 
+#### Foundational Concept Questions
+ 
+These test whether you understand the basics. Expect them early in the interview.
+ 
 | Question | What They're Testing |
 |----------|---------------------|
-| "Walk me through investigating a phishing alert" | Your investigation methodology and process |
-| "Explain the NIST IR framework phases" | Foundational knowledge |
-| "What is the difference between IDS and IPS?" | Core concept understanding |
-| "How would you investigate a brute force attack?" | Practical investigation skills |
-| "Explain the CIA Triad" | Security fundamentals |
-| "What is the TCP three-way handshake?" | Networking knowledge |
-| "How do you use MITRE ATT&CK in your work?" | Framework application |
-| "Tell me about a time you investigated an incident" | Practical experience (lab/CTF stories count!) |
-| "What ports does DNS/HTTP/HTTPS use?" | Memorized fundamentals |
-| "What would you do if you found a true positive?" | Escalation process understanding |
-
-**Phishing Investigation Methodology (practice this):**
+| "Explain the CIA Triad with examples" | Can you connect theory to real-world security |
+| "What is the difference between IDS and IPS?" | IDS monitors and alerts, IPS monitors and blocks |
+| "Describe the TCP three-way handshake" | SYN, SYN-ACK, ACK and why it matters for detection |
+| "What is the difference between encryption and hashing?" | Encryption is reversible (AES, RSA), hashing is one-way (SHA256, MD5) |
+| "Explain authentication vs authorization" | AuthN = who you are, AuthZ = what you can access |
+| "What is the difference between a vulnerability, a threat, and a risk?" | Weakness vs potential danger vs likelihood x impact |
+| "What does the Zero Trust model mean?" | Never trust, always verify, regardless of network location |
+| "Name 5 common ports and their services" | Tests memorization: 22/SSH, 53/DNS, 80/HTTP, 443/HTTPS, 3389/RDP |
+| "What is DNS and how does resolution work?" | Recursive query, root servers, TLD, authoritative, caching |
+| "What is the difference between TCP and UDP?" | Connection-oriented vs connectionless, reliability vs speed |
+| "Explain what a VLAN is and why it matters for security" | Logical network segmentation, reduces attack surface |
+| "What is NAT and why is it used?" | Translates private IPs to public, hides internal network structure |
+ 
+#### Framework & Methodology Questions
+ 
+These test your understanding of how security operations are structured.
+ 
+| Question | What They're Testing |
+|----------|---------------------|
+| "Walk me through the NIST Incident Response phases" | Preparation, Detection & Analysis, Containment/Eradication/Recovery, Post-Incident |
+| "How do you use MITRE ATT&CK in your daily work?" | Map alerts to techniques, identify detection gaps, guide threat hunting |
+| "What is the Cyber Kill Chain and how would you use it?" | Understanding attack progression, detecting at each stage |
+| "Explain the difference between NIST CSF and CIS Controls" | CSF = strategic framework (5 functions), CIS = tactical controls (18 prioritized actions) |
+| "What is the difference between a true positive, false positive, true negative, and false negative?" | Critical for alert triage: TP = real alert, FP = false alarm, FN = missed attack (most dangerous) |
+| "How would you reduce false positives in a SIEM?" | Tune rules, add context/whitelists, correlate with threat intel, adjust thresholds |
+| "What are IOCs and how do you use them?" | Indicators of Compromise: IPs, domains, hashes, file names used to detect known threats |
+| "What is the difference between IOCs and TTPs?" | IOCs are specific artifacts (change often), TTPs are behavioral patterns (harder to change) |
+ 
+#### Tools & Technical Questions
+ 
+These test your hands-on skills with the tools you will use daily.
+ 
+| Question | What They're Testing |
+|----------|---------------------|
+| "Have you used any SIEM tools? Write a basic query" | Practical Splunk SPL or KQL ability |
+| "What is Sysmon and which Event IDs are most useful?" | Event ID 1 (process creation), 3 (network), 11 (file create), 22 (DNS) |
+| "Explain what SIGMA rules are and why they matter" | Vendor-agnostic detection rules, convertible to any SIEM query format |
+| "What Windows Event ID indicates a successful logon? A failed one?" | 4624 = success, 4625 = failed |
+| "How would you detect someone clearing Windows Event Logs?" | Event ID 1102 in Security log |
+| "What tools would you use for memory forensics?" | Volatility (standard), also Rekall |
+| "What is the purpose of Wireshark display filters vs capture filters?" | Display filters = filter what you see, capture filters = filter what is collected |
+| "You see Event ID 7045 in a Windows system log. What does it mean?" | New service installed, potential persistence mechanism |
+| "What is the difference between EDR and antivirus?" | AV = signature-based file scanning, EDR = behavioral monitoring, detection, and response |
+| "How does Kerberos authentication work?" | TGT from KDC, TGS for services, why attackers target it (Kerberoasting, Golden Ticket) |
+ 
+#### Scenario-Based Questions (Most Important)
+ 
+These carry the most weight. Interviewers want to see your thought process, not a perfect answer.
+ 
+**Scenario 1: Phishing Investigation**
+> "A user reports a suspicious email. Walk me through your investigation."
+ 
 ```
-1. Analyze email headers (sender, return-path, SPF/DKIM/DMARC)
-2. Examine sender address (display name vs actual address)
-3. Extract and analyze URLs (hover, don't click; use URLScan.io)
-4. Sandbox any attachments (ANY.RUN, Hybrid Analysis)
-5. Search SIEM for other recipients of the same email
-6. Check if any user clicked links or submitted credentials
-7. Extract IOCs (IPs, domains, hashes)
-8. Determine scope and escalate if needed
-9. Document findings in case management system
+1. Collect the email (full headers, not just forwarded body)
+2. Analyze headers: check sender address vs display name, Return-Path, SPF/DKIM/DMARC results
+3. Examine URLs: extract without clicking, check with URLScan.io, look for typosquatting
+4. Sandbox attachments: submit to ANY.RUN or Hybrid Analysis
+5. Query SIEM: find all recipients of the same email (Subject, sender, attachment hash)
+6. Check if anyone clicked: proxy logs, DNS logs for the malicious domain
+7. Check for credential submission: authentication logs for impossible travel or new locations
+8. Extract IOCs: sender IP, domain, URLs, file hashes
+9. If confirmed malicious: block sender/domain, quarantine from all mailboxes, reset credentials if needed
+10. Document: create ticket, write findings, update block lists and detection rules
+```
+ 
+**Scenario 2: Brute Force Detection**
+> "You see 500 failed login attempts from a single IP in 10 minutes followed by a successful login. What do you do?"
+ 
+```
+1. Verify the alert: check Event IDs 4625 (failed) and 4624 (success) in SIEM
+2. Identify the target account and source IP
+3. Check IP reputation: AbuseIPDB, VirusTotal, geo-location
+4. Assess the successful login: is it legitimate or did the attacker succeed?
+5. If compromised: disable account, force password reset, check for lateral movement
+6. Check for post-login activity: any new processes (4688), services (7045), group changes (4728)
+7. Block the source IP at firewall level
+8. Search for same IP targeting other accounts
+9. Notify the account owner through a verified channel (not email, in case email is compromised)
+10. Document and recommend: MFA enforcement, account lockout policies, geo-blocking
+```
+ 
+**Scenario 3: Suspicious Process Execution**
+> "Your EDR alerts on powershell.exe spawning from winword.exe. What does this mean and what do you do?"
+ 
+```
+1. This is a classic malicious macro behavior: Word document opens, runs PowerShell
+2. Check the user: who opened the document? Was it from email?
+3. Examine the PowerShell command line (Event ID 4688 or Sysmon Event 1):
+   - Is it encoded/obfuscated? (Base64 encoded commands are suspicious)
+   - Does it reach out to external IPs? (C2 communication)
+   - Does it download additional payloads? (certutil, wget, Invoke-WebRequest)
+4. Check network connections from that endpoint (Sysmon Event 3)
+5. Isolate the endpoint via EDR if confirmed malicious
+6. Trace back to the source: find the original email and document
+7. Check for other endpoints with the same document hash
+8. Collect forensic artifacts: memory dump, prefetch files, recent file activity
+9. Map to MITRE ATT&CK: Initial Access (T1566.001 Spearphishing Attachment), Execution (T1059.001 PowerShell)
+10. Escalate to Tier 2/IR team with all findings
+```
+ 
+**Scenario 4: Lateral Movement Detection**
+> "You notice a service account authenticating to 15 different servers within 3 minutes. Is this normal?"
+ 
+```
+1. Check baseline: does this service account normally authenticate to many servers? (some do for backups, monitoring)
+2. If abnormal: check the authentication type (Kerberos, NTLM, RDP, PsExec)
+3. Look for Event ID 4648 (explicit credentials) which indicates pass-the-hash or credential reuse
+4. Check if PsExec or remote service artifacts exist (Event ID 7045 on target machines)
+5. Review the source machine: was it recently compromised?
+6. Check for data access patterns: did the account access file shares or databases?
+7. If confirmed suspicious: disable the service account, isolate the source machine
+8. Reset the service account credentials and any other accounts that used the same password
+9. Check all 15 servers for signs of compromise (new services, scheduled tasks, new accounts)
+10. Map to ATT&CK: Lateral Movement (T1021 Remote Services), Credential Access (T1003 Credential Dumping)
+```
+ 
+**Scenario 5: Ransomware Response**
+> "Multiple users report they cannot open their files and see a ransom note on their desktops. What are your first steps?"
+ 
+```
+1. DO NOT shut down affected machines (you may lose volatile memory evidence)
+2. Isolate affected systems from the network immediately (disconnect, not power off)
+3. Identify patient zero: which system was first affected? (check file modification timestamps)
+4. Determine the ransomware strain: ransom note text, file extension, check ID Ransomware (id-ransomware.malwarehunterteam.com)
+5. Assess scope: how many systems affected? Check SIEM for the ransomware file hash across all endpoints
+6. Preserve evidence: memory dump of affected systems, copy of ransom note, sample of encrypted files
+7. Check backup integrity: are backups clean and available for recovery?
+8. Identify entry vector: phishing email, exposed RDP, vulnerable VPN, supply chain
+9. Engage incident response team, management, and potentially legal/law enforcement
+10. Begin containment: block C2 domains/IPs, patch the exploited vulnerability, reset all credentials
+```
+ 
+**Scenario 6: Insider Threat**
+> "DLP alerts show a user downloading 2GB of customer data to a USB drive at 11 PM. How do you handle this?"
+ 
+```
+1. Verify the alert: confirm the DLP event in logs, check what data was accessed
+2. Check the user's normal behavior: do they usually access this data? Do they work late?
+3. Review recent HR activity: is the user on a PIP, submitted resignation, or under investigation?
+4. Check for other suspicious activity: personal email forwards, cloud storage uploads, print jobs
+5. Do NOT alert the user yet, coordinate with HR and legal first
+6. Preserve evidence: DLP logs, file access logs, badge entry/exit times, CCTV if applicable
+7. Assess the sensitivity of the data: PII, financial records, intellectual property?
+8. Follow your organization's insider threat policy for escalation
+9. If data contains PII: assess data breach notification requirements (GDPR, CCPA, etc.)
+10. Document everything with timestamps for potential legal proceedings
+```
+ 
+**Scenario 7: SIEM Down During an Incident**
+> "Your SIEM goes down while you're investigating an active incident. What do you do?"
+ 
+```
+1. Don't panic: switch to alternative data sources
+2. Use EDR console directly for endpoint telemetry
+3. Check firewall and proxy logs through their native interfaces
+4. Use PowerShell/CLI to query Windows Event Logs directly on affected systems
+5. Check network monitoring tools (Zeek, Suricata) for network-level visibility
+6. Document everything manually with timestamps
+7. Coordinate with the SIEM/IT team for restoration while continuing investigation
+8. Once SIEM is back, backfill your investigation with log data from the downtime period
+```
+ 
+#### Behavioral Questions
+ 
+Don't underestimate these. They assess culture fit and how you handle real-world SOC pressures.
+ 
+| Question | What They Want to Hear |
+|----------|----------------------|
+| "How do you stay current with cybersecurity news?" | Specific sources: DFIR Report, Krebs, Darknet Diaries, Twitter/X infosec community, RSS feeds |
+| "Describe a time you had to learn something quickly" | Show adaptability, mention a specific tool or concept from labs/CTFs |
+| "How do you handle working rotating shifts?" | Honest answer about work-life balance, show you understand SOC reality |
+| "What do you do when you disagree with a senior analyst's assessment?" | Respectful pushback with evidence, escalation path, willingness to learn |
+| "How do you prioritize when multiple alerts fire at once?" | Severity-based triage, critical assets first, follow the playbook, communicate with team |
+| "Tell me about a mistake you made and what you learned" | Shows self-awareness, growth mindset, process improvement |
+| "Why Blue Team instead of Red Team?" | Genuine answer about defending, protecting people, the challenge of detection |
+| "What's a recent security breach you found interesting?" | Demonstrates you follow the industry, can analyze from a defender's perspective |
+ 
+#### Investigation Methodologies to Practice
+ 
+**DNS Tunneling Detection:**
+```
+1. Monitor for high volume of DNS queries to a single domain
+2. Look for unusually long subdomain names (data encoded in subdomain)
+3. Check for TXT record queries (often used for data exfiltration)
+4. Identify DNS traffic to non-standard ports
+5. Compare against baseline DNS patterns for the organization
+```
+ 
+**Malicious Binary Analysis (Basic):**
+```
+1. NEVER execute the file on a production machine
+2. Calculate file hash (MD5, SHA256) and check VirusTotal
+3. Check file properties: size, compile date, digital signature
+4. Run strings analysis: look for URLs, IPs, suspicious function calls
+5. Submit to a sandbox (ANY.RUN, Hybrid Analysis) for dynamic analysis
+6. Check for known malware family matches
+7. Extract IOCs and update detection rules
+```
+ 
+**Compromised Account Investigation:**
+```
+1. Review authentication logs: impossible travel, new device, unusual hours
+2. Check MFA status: was MFA bypassed or not configured?
+3. Review email activity: forwarding rules, sent items, deleted items
+4. Check for inbox rules created to hide attacker emails
+5. Review file access: SharePoint, OneDrive, internal file servers
+6. Check for OAuth app consents (common persistence in cloud environments)
+7. Reset credentials, revoke sessions, review and remove suspicious OAuth apps
 ```
 
 ### 10.5 Interview Resources
